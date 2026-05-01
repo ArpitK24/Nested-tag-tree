@@ -1,7 +1,16 @@
 import axios from 'axios';
 import { TreeData, TreeResponse, TreeListResponse, TagNode } from './types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const normalizeApiBaseUrl = (value?: string): string => {
+  const raw = (value || "").trim();
+  if (!raw) return "/api";
+  if (raw.startsWith("/")) return raw.replace(/\/+$/, "");
+  const cleaned = raw.replace(/\/+$/, "");
+  if (cleaned.endsWith("/api")) return cleaned;
+  return `${cleaned}/api`;
+};
+
+const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,

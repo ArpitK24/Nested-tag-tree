@@ -28,10 +28,12 @@ app = FastAPI(
 
 frontend_origin = os.getenv("FRONTEND_ORIGIN", "*")
 allow_origins = [o.strip() for o in frontend_origin.split(",") if o.strip()]
+frontend_origin_regex = os.getenv("FRONTEND_ORIGIN_REGEX", r"^https://.*\.vercel\.app$")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins or ["*"],
+    allow_origin_regex=frontend_origin_regex,
     # We do not use cookie/session auth here, so credentials are unnecessary.
     allow_credentials=False,
     allow_methods=["*"],
