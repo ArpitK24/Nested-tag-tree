@@ -5,6 +5,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
+import os
 
 try:
     from .database import engine, get_db, Base
@@ -25,10 +26,14 @@ app = FastAPI(
     version="1.0.0",
 )
 
+frontend_origin = os.getenv("FRONTEND_ORIGIN", "*")
+allow_origins = [o.strip() for o in frontend_origin.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Restrict to specific origins in production
-    allow_credentials=True,
+    allow_origins=allow_origins or ["*"],
+    # We do not use cookie/session auth here, so credentials are unnecessary.
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
