@@ -11,7 +11,10 @@ import json
 from sqlalchemy import Column, Integer, String, DateTime, Text
 from sqlalchemy.sql import text
 from sqlalchemy.types import TypeDecorator
-from .database import Base
+try:
+    from .database import Base
+except ImportError:
+    from database import Base
 
 
 class JSONText(TypeDecorator):

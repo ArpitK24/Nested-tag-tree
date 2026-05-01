@@ -6,9 +6,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 
-from .database import engine, get_db, Base
-from .models import TreeNode
-from .schemas import TreeCreate, TreeUpdate, TreeResponse, TreeListResponse
+try:
+    from .database import engine, get_db, Base
+    from .models import TreeNode
+    from .schemas import TreeCreate, TreeUpdate, TreeResponse, TreeListResponse
+except ImportError:
+    # Support execution when backend is used as Render rootDir and imported as `main:app`.
+    from database import engine, get_db, Base
+    from models import TreeNode
+    from schemas import TreeCreate, TreeUpdate, TreeResponse, TreeListResponse
 
 # Create database tables on startup
 Base.metadata.create_all(bind=engine)
@@ -107,4 +113,4 @@ def delete_tree(tree_id: int, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
